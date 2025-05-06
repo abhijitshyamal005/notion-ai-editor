@@ -1,27 +1,41 @@
 import { useStore } from '../store/useNotesStore';
-
-interface Note {
-  id: string;
-  title: string;
-}
+import { Plus } from 'lucide-react';
 
 const Sidebar = () => {
-  const { notes, setActiveNote, addNote } = useStore();
+  const { notes, activeNoteId, setActiveNoteId, addNote } = useStore();
+
+  // Handle adding a new note
+  const handleAddNote = () => {
+    addNote('New Note');
+  };
 
   return (
-    <div className="w-1/4 bg-gray-100 p-4">
-      <h2 className="text-lg font-bold">Notes</h2>
-      <button onClick={() => addNote('New Note')} className="mt-4 bg-blue-500 text-white p-2 rounded">
-        Add New Note
-      </button>
-      <ul className="space-y-2 mt-4">
+    <div className="w-64 min-h-screen bg-gradient-to-b from-indigo-600 to-purple-700 text-white shadow-lg p-4 space-y-4">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold">🗒️ My Notes</h2>
+        <button
+          onClick={handleAddNote}
+          className="bg-white text-indigo-600 p-1 rounded-full hover:scale-105 transition"
+          aria-label="Add New Note"
+        >
+          <Plus size={20} />
+        </button>
+      </div>
+
+      {/* Notes List */}
+      <ul className="space-y-2">
         {notes.map((note) => (
           <li
             key={note.id}
-            className="cursor-pointer"
-            onClick={() => setActiveNote(note.id)}
+            onClick={() => setActiveNoteId(note.id)}
+            className={`cursor-pointer px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              note.id === activeNoteId
+                ? 'bg-white text-indigo-700 shadow'
+                : 'hover:bg-white/20'
+            }`}
           >
-            {note.title}
+            {note.title || 'Untitled Note'}
           </li>
         ))}
       </ul>

@@ -1,22 +1,27 @@
 import { useState } from 'react';
-import { useStore } from '../store/useNotesStore';
+import ChatWindow from './ChatWindow';
+import { Sparkles } from 'lucide-react'; // Optional icon, install via: `npm i lucide-react`
 
 const ChatButton = () => {
-  const { activeNoteId } = useStore();
   const [isOpen, setIsOpen] = useState(false);
 
-  if (!activeNoteId) return null;
+  const toggleChatWindow = () => {
+    setIsOpen((prev) => !prev);
+  };
 
   return (
-    <div>
+    <>
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-4 right-4 bg-blue-500 text-white p-4 rounded-full shadow-lg"
+        onClick={toggleChatWindow}
+        className="fixed bottom-6 right-6 bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-white shadow-xl rounded-full p-4 transition-all duration-300 hover:scale-105 flex items-center gap-2 z-50"
+        aria-label="Toggle AI Chat"
       >
-        Chat
+        <Sparkles size={20} />
+        <span className="font-semibold">Ask AI</span>
       </button>
-      {isOpen && <div className="absolute bottom-16 right-4 w-80 bg-white p-4 rounded-lg shadow-lg">Chat Window</div>}
-    </div>
+
+      {isOpen && <ChatWindow onClose={toggleChatWindow} />}
+    </>
   );
 };
 
