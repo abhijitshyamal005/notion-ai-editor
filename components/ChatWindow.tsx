@@ -1,34 +1,47 @@
-import { useNotesStore } from '../store/useNotesStore'
-import { useState } from 'react'
+import { useState } from 'react';
+import { useStore } from '../store/useNotesStore';
 
-export default function ChatWindow({ noteId }: { noteId: string }) {
-  const { notes, addChatMessage } = useNotesStore()
-  const note = notes.find(n => n.id === noteId)
-  const [input, setInput] = useState('')
+const ChatWindow = () => {
+  const { activeNoteId, addChatMessage } = useStore();
+  const [message, setMessage] = useState('');
 
   const sendMessage = () => {
-    if (!input.trim()) return
-    addChatMessage(noteId, { role: 'user', content: input })
-    addChatMessage(noteId, { role: 'ai', content: 'This is a d AI response.' })
-    setInput('')
-  }
+    if (message.trim()) {
+      addChatMessage(activeNoteId || '', { sender: 'user', message });
+      setMessage('');
+      
+      setTimeout(() => {
+        addChatMessage(activeNoteId || '', { sender: 'ai', message: 'Mock AI Response' });
+      }, 1000);
+    }
+  };
+
+  type ChatMessage = { sender: string; message: string };
+  const chatHistory: ChatMessage[] = useStore.getState().notes.find((note: { id: string; chatHistory: ChatMessage[] }) => note.id === activeNoteId)?.chatHistory || [];
 
   return (
-    <div className="mt-4 border-t pt-4 space-y-2">
-      {note?.chatHistory.map((msg, idx) => (
-        <div key={idx} className={`p-2 rounded ${msg.role === 'user' ? 'bg-blue-100 text-right' : 'bg-gray-100 text-left'}`}>
-          {msg.content}
-        </div>
-      ))}
-      <div className="flex gap-2 mt-2">
+    <div className="fixed bottom-16 right-4 w-80 bg-white p-4 rounded-lg shadow-lg">
+      <div className="h-64 overflow-auto">
+        {chatHistory.map((msg, index) => (
+          <div key={index} className={msg.sender === 'user' ? 'text-right' : ''}>
+            <div className="p-2">{msg.message}</div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-2">
         <input
-          className="border p-2 flex-1 rounded"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask the AI something..."
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          className="w-full p-2 border rounded"
+          placeholder="Ask something..."
         />
-        <button className="bg-violet-600 text-white px-4 py-2 rounded" onClick={sendMessage}>Send</button>
+        <button onClick={sendMessage} className="w-full mt-2 bg-blue-500 text-white p-2 rounded">
+          Send
+        </button>
       </div>
     </div>
-  )
-}
+  );
+};
+
+export default ChatWindow;

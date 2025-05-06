@@ -1,22 +1,32 @@
-import { useNotesStore } from '../store/useNotesStore'
+import { useStore } from '../store/useNotesStore';
 
-export default function Sidebar() {
-  const { notes, selectedNoteId, addNote, selectNote } = useNotesStore()
+interface Note {
+  id: string;
+  title: string;
+}
+
+const Sidebar = () => {
+  const { notes, setActiveNote, addNote } = useStore();
 
   return (
-    <div className="w-64 bg-gray100 h-screen p-4">
-      <button onClick={addNote} className="mb-4 w-full bg-blue-500 text-white py-2 rounded">+ New Note</button>
-      <ul>
-        {notes.map(note => (
+    <div className="w-1/4 bg-gray-100 p-4">
+      <h2 className="text-lg font-bold">Notes</h2>
+      <button onClick={() => addNote('New Note')} className="mt-4 bg-blue-500 text-white p-2 rounded">
+        Add New Note
+      </button>
+      <ul className="space-y-2 mt-4">
+        {notes.map((note) => (
           <li
             key={note.id}
-            className={`p-2 cursor-pointer ${note.id === selectedNoteId ? 'bg-blue-200' : ''}`}
-            onClick={() => selectNote(note.id)}
+            className="cursor-pointer"
+            onClick={() => setActiveNote(note.id)}
           >
             {note.title}
           </li>
         ))}
       </ul>
     </div>
-  )
-}
+  );
+};
+
+export default Sidebar;

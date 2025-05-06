@@ -1,34 +1,30 @@
-import { useEditor, EditorContent } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import Heading from '@tiptap/extension-heading'
-import BulletList from '@tiptap/extension-bullet-list'
-import OrderedList from '@tiptap/extension-ordered-list'
-import { useEffect } from 'react'
-import { useNotesStore } from '../store/useNotesStore'
+import { useEffect, useState } from 'react';
+import { useStore } from '../store/useNotesStore';
+import { EditorContent, useEditor } from '@tiptap/react';
+import { StarterKit } from '@tiptap/starter-kit';
 
-export default function NoteEditor() {
-  const { notes, selectedNoteId, updateNoteContent } = useNotesStore()
-  const currentNote = notes.find(n => n.id === selectedNoteId)
+const NoteEditor = () => {
+  const { activeNoteId, notes, updateNoteContent } = useStore();
+  const activeNote = notes.find((note: { id: string; content: string; title: string }) => note.id === activeNoteId);
 
   const editor = useEditor({
-    extensions: [StarterKit, Heading.configure({ levels: [1, 2, 3] }), BulletList, OrderedList],
-    content: currentNote?.content || '',
+    extensions: [StarterKit],
+    content: activeNote?.content || '',
     onUpdate({ editor }) {
-      if (currentNote) {
-        updateNoteContent(currentNote.id, editor.getJSON())
-      }
-    }
-  })
+      updateNoteContent(activeNoteId || '', editor.getHTML());
+    },
+  });
 
-  useEffect(() => {
-    if (editor && currentNote) {
-      editor.commands.setContent(currentNote.content || '')
-    }
-  }, [selectedNoteId])
+  if (!activeNote) return <div>Select a note to edit.</div>;
 
   return (
-    <div className="prose max-w-none border p-4 rounded">
-      <EditorContent editor={editor} />
+    <div className="flex-1 p-6">
+      <h1 className="text-3xl font-bold">{activeNote.title}</h1>
+      <div className="mt-4">
+        <EditorContent editor={editor} />
+      </div>
     </div>
-  )
-}
+  );
+};
+
+export default NoteEditor;

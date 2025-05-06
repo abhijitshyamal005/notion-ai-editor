@@ -1,28 +1,17 @@
-import Sidebar from '../components/Sidebar'
-import NoteEditor from '../components/NoteEditor'
-import ChatButton from '../components/ChatButton'
-import ChatWindow from '../components/ChatWindow'
-import { useState } from 'react'
-import { useNotesStore } from '../store/useNotesStore'
+import Sidebar from '../components/Sidebar';
+import NoteEditor from '../components/NoteEditor';
+import ChatButton from '../components/ChatButton';
 
-export default function Home() {
-  const [chatOpen, setChatOpen] = useState(false)
-  const { selectedNoteId } = useNotesStore()
-
+const Home = () => {
   return (
-    <div className="flex">
+    <div className="flex h-screen">
       <Sidebar />
-      <main className="flex-1 p-6">
-        {selectedNoteId ? (
-          <>
-            <NoteEditor />
-            {chatOpen && <ChatWindow noteId={selectedNoteId} />}
-            <ChatButton onClick={() => setChatOpen(prev => !prev)} />
-          </>
-        ) : (
-          <div>Select or create a note.</div>
-        )}
-      </main>
+      <div className="flex-1 flex flex-col">
+        <NoteEditor />
+        <ChatButton />
+      </div>
     </div>
-  )
-}
+  );
+};
+
+export default Home;
