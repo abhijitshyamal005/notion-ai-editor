@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import ChatWindow from './ChatWindow';
-import { Sparkles } from 'lucide-react'; // Optional icon, install via: `npm i lucide-react`
+import { Sparkles } from 'lucide-react'; 
 
 const ChatButton = () => {
   const [isOpen, setIsOpen] = useState(false);
